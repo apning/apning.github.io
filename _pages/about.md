@@ -56,7 +56,7 @@ latest_posts:
   }
 </style>
 
-Hello! I am an incoming CS PhD student at NYU, advised by [Prof. Greg Durrett](https://gregdurrett.github.io). I work on machine learning and language modeling.
+Hello! I am an incoming CS PhD student at NYU, advised by [Prof. Greg Durrett](https://gregdurrett.github.io). I work on machine learning and language modeling. I am particularly interested in the emergent safety implications of increasingly capable models and model-based systems.
 
 I have a BA in math and CS from the [absolutely gorgeous]({{ '/beautiful-uva/' | relative_url }}) University of Virginia, where I also co-founded and led [ML@UVA](https://www.mlatuva.org). In the past, I have worked on interpretability of transformers, latent reasoning, and physics ML.
 

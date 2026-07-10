@@ -25,8 +25,29 @@ Some beautiful photos from UVA. It is possible that photos of sunsets from a par
     {% if image.basename contains variant_suffix %}{% assign is_variant = true %}{% endif %}
   {% endfor %}
   {% if image_exts contains ext and is_variant == false %}
+  {% assign img_base = image.path | remove: image.extname %}
   <figure class="beautiful-uva-item">
-    <img src="{{ image.path | relative_url }}" alt="{{ image.basename }}" loading="lazy" data-zoomable />
+    {% comment %} Link points at the full-res original; GLightbox renders it natively (sharp + pan/zoom). {% endcomment %}
+    <a
+      href="{{ image.path | relative_url }}"
+      class="glightbox"
+      data-gallery="beautiful-uva"
+    >
+      <picture>
+        {% comment %} Small WebP variants for the grid thumbnail — keeps downloads/memory tiny. {% endcomment %}
+        <source
+          type="image/webp"
+          srcset="{{ img_base | append: '-480.webp' | relative_url }} 480w, {{ img_base | append: '-800.webp' | relative_url }} 800w"
+          sizes="(max-width: 600px) 90vw, 320px"
+        />
+        <img
+          src="{{ image.path | relative_url }}"
+          alt="{{ image.basename }}"
+          loading="lazy"
+          decoding="async"
+        />
+      </picture>
+    </a>
   </figure>
   {% endif %}
 {% endfor %}
@@ -42,6 +63,11 @@ Some beautiful photos from UVA. It is possible that photos of sunsets from a par
   .beautiful-uva-item {
     margin: 0;
   }
+  .beautiful-uva-item a,
+  .beautiful-uva-item picture {
+    display: block;
+    height: 100%;
+  }
   .beautiful-uva-item img {
     width: 100%;
     height: 100%;
@@ -51,3 +77,26 @@ Some beautiful photos from UVA. It is possible that photos of sunsets from a par
     cursor: zoom-in;
   }
 </style>
+
+{% comment %} GLightbox: in-page overlay that shows the full-res image natively with arrow-key navigation. {% endcomment %}
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/css/glightbox.min.css"
+  integrity="sha256-bT9i1NF5afnHDpQ4z2cQBHJQGehoEj8uvClaAG+NXS0="
+  crossorigin="anonymous"
+/>
+<script
+  src="https://cdn.jsdelivr.net/npm/glightbox@3.3.0/dist/js/glightbox.min.js"
+  integrity="sha256-pDrSUa13vOne5uuB/pSUdT2vNTXsq1i4vtm/xpqJX9w="
+  crossorigin="anonymous"
+></script>
+<script>
+  window.addEventListener("load", function () {
+    GLightbox({
+      selector: ".glightbox",
+      loop: true, // arrow past the last image wraps back to the first
+      zoomable: true, // scroll / pinch to zoom, drag to pan the full-res image
+      touchNavigation: true, // swipe left/right on mobile
+    });
+  });
+</script>
