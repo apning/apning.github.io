@@ -76,10 +76,7 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
 
 - <span class="cv-date">Jan 2024 – Dec 2024</span>TA for [CS 3130](https://www.cs.virginia.edu/~cr4bd/3130/F2024/) (Computer Systems and Organization 2) at UVA for two semesters
 - ML@UVA
-  - <span class="cv-date">Nov 2024</span>Created and delivered 3-hour lecture series *Intro to Transformers from a Mechanistic Interpretability Perspective* alongside [Vainateya Rangaraju](https://vainateyar.com)
-    - [Lecture 1 (YouTube)](https://youtu.be/I5tXDlg7gGM)
-    - [Lecture 2 (YouTube)](https://youtu.be/p_hMsXVcuDA)
-    - [Lecture 3 (YouTube)](https://youtu.be/_k_8AJSNmk0)
+  - <span class="cv-date">Nov 2024</span>Created and delivered 3-hour lecture series [Intro to Transformers from a Mechanistic Interpretability Perspective](https://youtube.com/playlist?list=PLPUFuwYqzOE2oKVLDdeimXOvC2YiUYB84&si=P3nfrs_eucVUqKEo) alongside [Vainateya Rangaraju](https://vainateyar.com)
   - <span class="cv-date">Sep 2024 - Dec 2024</span>Led weekly [reading group](https://www.mlatuva.org/education)
   - <span class="cv-date">Sep 2023 - Dec 2024</span>Mentored interest projects weekly
 
