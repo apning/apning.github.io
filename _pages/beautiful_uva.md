@@ -6,7 +6,9 @@ description:
 nav: false
 ---
 
-Some beautiful photos from UVA. It is possible that photos of sunsets from a particular balcony are overrepresented in this dataset. In my defense, it was a frickin' awesome view, and I love sunsets.
+Some beautiful photos from UVA. Located right next to the Appalachians, Charlottesville is absolutely stunning. Especially during a certain week or two in the autumn, when it feels like a complete shame to walk into your classes *when you could stay outside staring at the trees*.
+
+It is possible that photos of sunsets from a particular balcony are overrepresented in this dataset. In my defense, it was a frickin' awesome view, and I love sunsets.
 
 <!--
   Every image dropped into `assets/img/beautiful_uva/` is displayed below
