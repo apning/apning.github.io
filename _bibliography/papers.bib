@@ -1,115 +1,73 @@
 ---
 ---
 
-@string{aps = {American Physical Society,}}
 
-@book{einstein1920relativity,
-  title     = {Relativity: the Special and General Theory},
-  author    = {Einstein, Albert},
-  year      = {1920},
-  publisher = {Methuen & Co Ltd},
-  html      = {relativity.html}
+
+@inproceedings{ning2026visualizingllmlatent,
+  abbr = {ICLR Blogposts},
+  author = {Ning, Alex and Rangaraju, Vainateya and Kuo, Yen-Ling},
+  title = {Visualizing LLM Latent Space Geometry Through Dimensionality Reduction},
+  abstract = {In this blog post, we extract, process, and visualize latent state geometries in Transformer-based language models through dimensionality reduction to build a better intuition of their internal dynamics. We demonstrate experiments with GPT-2 and LLaMa models, uncovering interesting geometric patterns in their latent spaces. Notably, we identify a clear separation between attention and MLP component outputs across intermediate layers, a pattern not documented in prior work to our knowledge.},
+  booktitle = {ICLR Blogposts 2026},
+  year = {2026},
+  date = {April 27, 2026},
+  html = {https://iclr-blogposts.github.io/2026/blog/2026/vis-llm-latent-geometry/},
+  url  = {https://iclr-blogposts.github.io/2026/blog/2026/vis-llm-latent-geometry/},
+  preview = {2026_iclr_blogposts_preview.png},
+  code = {https://github.com/Vainateya/Feature_Geometry_Visualization},
+  selected={true}
 }
 
-@book{einstein1956investigations,
-  bibtex_show = {true},
-  title       = {Investigations on the Theory of the Brownian Movement},
-  author      = {Einstein, Albert},
-  year        = {1956},
-  publisher   = {Courier Corporation},
-  preview     = {brownian-motion.gif}
+@article{7dr5-68ky,
+  abbr = {Phys. Rev. E},
+  title = {Recurrent convolutional neural networks for modeling nonadiabatic dynamics of quantum-classical systems},
+  author = {Ning, Alex and Yang, Lingyu and Chern, Gia-Wei},
+  abstract = {Recurrent neural networks (RNNs) have recently been extensively applied to model the time evolution in fluid dynamics, weather predictions, and even chaotic systems due to their ability to capture temporal dependencies and sequential patterns in data. Here we present an RNN model based on convolutional neural networks for modeling the nonlinear nonadiabatic dynamics of hybrid quantum-classical systems. The dynamical evolution of the hybrid systems is governed by equations of motion for classical degrees of freedom and von Neumann equation for electrons. The Physics-Aware Recurrent Convolution (PARC) neural network structure incorporates a differentiator-integrator architecture that inductively models the spatiotemporal dynamics of generic physical systems. We apply our RNN approach to learn the space-time evolution of a one-dimensional semiclassical Holstein model after an interaction quench. For shallow quenches (small changes in electron-lattice coupling), the deterministic dynamics can be accurately captured using a single-CNN-based recurrent network. In contrast, deep quenches induce chaotic evolution, making long-term trajectory prediction significantly more challenging. Nonetheless, we demonstrate that the PARC-CNN architecture can effectively learn the statistical climate of the Holstein model under deep-quench conditions.},
+  journal = {Phys. Rev. E},
+  volume = {113},
+  issue = {1},
+  pages = {015307},
+  numpages = {16},
+  year = {2026},
+  month = {Jan},
+  publisher = {American Physical Society},
+  doi = {10.1103/7dr5-68ky},
+  url = {https://link.aps.org/doi/10.1103/7dr5-68ky},
+  arxiv = {2412.06631},
+  preview = {2026_PRE_parc_preview.png},
+  code = {https://github.com/apning/holstein-parc},
+  selected={true}
 }
 
-@article{einstein1950meaning,
-  abbr        = {AJP},
-  bibtex_show = {true},
-  title       = {The meaning of relativity},
-  author      = {Einstein, Albert and Taub, AH},
-  journal     = {American Journal of Physics},
-  volume      = {18},
-  number      = {6},
-  pages       = {403--404},
-  year        = {1950},
-  publisher   = {American Association of Physics Teachers}
+@misc{ning2025learningstopadaptivelatent,
+      abbr = {arXiv},
+      title={Learning When to Stop: Adaptive Latent Reasoning via Reinforcement Learning},
+      abstract = {Latent reasoning represents a new development in Transformer language models that has shown potential in compressing reasoning lengths compared to chain-of-thought reasoning. By directly passing the information-rich previous final latent state into the next sequence, latent reasoning removes the restriction to human language tokens as the medium for reasoning. We develop adaptive-length latent reasoning models and introduce a post-SFT reinforcement-learning methodology to optimize latent reasoning length by minimizing reasoning length while maintaining accuracy. This, in turn, further reduces compute usage and raises the bar on the compressive capabilities of latent reasoning models. Experiments on the Llama 3.2 1B model and the GSM8K-Aug dataset show a 52% drop in total reasoning length with no penalty to accuracy. In future work, we plan to extend to additional models and datasets, analyze relationships between training coefficients, experiment with architecture variations, and continue our knowledge distillation for latent reasoning SFT efforts. We make our code and pretrained weights available at https://github.com/apning/adaptive-latent-reasoning.},
+      author={Alex Ning and Yen-Ling Kuo and Gabe Gomes},
+      year={2025},
+      arxiv={2511.21581},
+      eprint={2511.21581},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2511.21581},
+      preview = {2025_arxiv_latent_reasoning_preview.png},
+      code = {https://github.com/apning/adaptive-latent-reasoning},
+      selected={true}
 }
 
-@article{PhysRev.47.777,
-  abbr              = {PhysRev},
-  title             = {Can Quantum-Mechanical Description of Physical Reality Be Considered Complete?},
-  author            = {Einstein*†, A. and Podolsky*, B. and Rosen*, N.},
-  abstract          = {In a complete theory there is an element corresponding to each element of reality. A sufficient condition for the reality of a physical quantity is the possibility of predicting it with certainty, without disturbing the system. In quantum mechanics in the case of two physical quantities described by non-commuting operators, the knowledge of one precludes the knowledge of the other. Then either (1) the description of reality given by the wave function in quantum mechanics is not complete or (2) these two quantities cannot have simultaneous reality. Consideration of the problem of making predictions concerning a system on the basis of measurements made on another system that had previously interacted with it leads to the result that if (1) is false then (2) is also false. One is thus led to conclude that the description of reality as given by a wave function is not complete.},
-  journal           = {Phys. Rev.},
-  location          = {New Jersey},
-  volume            = {47},
-  issue             = {10},
-  pages             = {777--780},
-  numpages          = {0},
-  year              = {1935},
-  month             = {May},
-  publisher         = aps,
-  doi               = {10.1103/PhysRev.47.777},
-  url               = {https://link.aps.org/doi/10.1103/PhysRev.47.777},
-  html              = {https://journals.aps.org/pr/abstract/10.1103/PhysRev.47.777},
-  pdf               = {example_pdf.pdf},
-  altmetric         = {248277},
-  dimensions        = {true},
-  google_scholar_id = {qyhmnyLat1gC},
-  video             = {https://www.youtube-nocookie.com/embed/aqz-KE-bpKQ},
-  additional_info   = {. *More Information* can be [found here](https://github.com/alshedivat/al-folio/)},
-  annotation        = {* Example use of superscripts<br>† Albert Einstein},
-  selected          = {true},
-  inspirehep_id     = {3255}
-}
 
-@article{einstein1905molekularkinetischen,
-  title     = {{\"U}ber die von der molekularkinetischen Theorie der W{\"a}rme geforderte Bewegung von in ruhenden Fl{\"u}ssigkeiten suspendierten Teilchen},
-  author    = {Einstein, A.},
-  journal   = {Annalen der physik},
-  volume    = {322},
-  number    = {8},
-  pages     = {549--560},
-  year      = {1905},
-  publisher = {Wiley Online Library}
-}
+@misc{ning2025changeofbasispruningrotationalinvariance,
+      abbr = {arXiv},
+      title={Change-of-Basis Pruning via Rotational Invariance}, 
+      author={Alex Ning and Vainateya Rangaraju},
+      abstract = {Structured pruning removes entire neurons or channels, but its effectiveness depends on how importance is distributed across the representation space. Change-of-basis (CoB) pruning addresses this challenge by applying orthogonal linear transformations that concentrate importance within certain dimensions. However, many standard deep learning architectures are not inherently invariant to such transformations. To enable compatibility, we introduce two-subspace radial activations (TSRAs): an activation family that is invariant to orthogonal linear transformations applied independently within its two activation subspaces. This invariance allows CoB transformations to be merged into surrounding weights without incurring extra parameters. We position this work as a proof-of-concept that a rotationally invariant design may offer a principled approach towards change-of-basis pruning. We do not provide an analysis of multiple TSRA candidates nor do we explore weight initialization for any TSRAs. These limitations, combined with other necessary modifications we make to permit rotational invariance, result in a slight accuracy drop of 4.52% compared to a ReLU-based control. However, using activation-magnitude importance, VGG-16 implementing our CoB+TSRA framework shows encouraging results on CIFAR-10. Under fixed-ratio structured pruning, CoB improves accuracy over a TSRA baseline at all pruning ratios and extends reliable pruning frontier from roughly 30% to 70% of parameters without post-prune fine tuning. Under threshold-based pruning strategies, CoB prunes 90−96% of parameters while maintaining 1−6% accuracy drop after fine-tuning. Together, these results indicate that rotationally invariant architectures may offer a promising path towards CoB pruning.},
+      year={2025},
+      eprint={2511.16061},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2511.16061},
+      arxiv={2511.16061},
+      preview = {2025_arxiv_cob_pruning_preview.png},
+      code = {https://github.com/apning/change-of-basis-pruning}
 
-@article{einstein1905movement,
-  abbr    = {Ann. Phys.},
-  title   = {Un the movement of small particles suspended in statiunary liquids required by the molecular-kinetic theory 0f heat},
-  author  = {Einstein, A.},
-  journal = {Ann. Phys.},
-  volume  = {17},
-  pages   = {549--560},
-  year    = {1905}
-}
-
-@article{einstein1905electrodynamics,
-  title  = {On the electrodynamics of moving bodies},
-  author = {Einstein, A.},
-  year   = {1905}
-}
-
-@article{einstein1905photoelectriceffect,
-  bibtex_show = {true},
-  abbr        = {Ann. Phys.},
-  title       = {{{\"U}ber einen die Erzeugung und Verwandlung des Lichtes betreffenden heuristischen Gesichtspunkt}},
-  author      = {Albert Einstein},
-  abstract    = {This is the abstract text.},
-  journal     = {Ann. Phys.},
-  volume      = {322},
-  number      = {6},
-  pages       = {132--148},
-  year        = {1905},
-  doi         = {10.1002/andp.19053220607},
-  award       = {Albert Einstein receveid the **Nobel Prize in Physics** 1921 *for his services to Theoretical Physics, and especially for his discovery of the law of the photoelectric effect*},
-  award_name  = {Nobel Prize}
-}
-
-@book{przibram1967letters,
-  bibtex_show = {true},
-  title       = {Letters on wave mechanics},
-  author      = {Einstein, Albert and Schrödinger, Erwin and Planck, Max and Lorentz, Hendrik Antoon and Przibram, Karl},
-  year        = {1967},
-  publisher   = {Vision},
-  preview     = {wave-mechanics.gif},
-  abbr        = {Vision}
 }

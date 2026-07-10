@@ -157,11 +157,11 @@
   font-size: 0.875rem;
 
   a {
-    color: inherit;
+    color: var(--global-theme-color);
 
     &:hover {
       color: var(--global-theme-color);
-      text-decoration: none;
+      text-decoration: underline;
     }
   }
 }

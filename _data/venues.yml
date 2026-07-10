@@ -5,5 +5,17 @@
 "PhysRev":
   url: https://journals.aps.org/
 
+"Phys. Rev. E":
+  url: https://journals.aps.org/pre/
+  color: "#8b0000"
+
+"ICLR Blogposts":
+  url: https://iclr-blogposts.github.io/2026/
+  color: "#35414d"
+
+"arXiv":
+  url: https://arxiv.org/
+  color: "#b31b1b"
+
 "Vision":
   color: "#009f36"
