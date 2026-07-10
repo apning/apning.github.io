@@ -37,6 +37,15 @@ latest_posts:
     clear: right;
   }
 
+  /* On mobile the profile stacks above the bio, leaving the email cramped
+     against the intro text. Add a little breathing room below it.
+     Scoped to <576px so desktop (floated profile) spacing is untouched. */
+  @media (max-width: 575.98px) {
+    .profile .more-info {
+      margin-bottom: 1.75rem;
+    }
+  }
+
   /* CV-style dates floated to the right of a list item */
   .cv-date {
     float: right;
