@@ -10,6 +10,8 @@ Some beautiful photos from UVA. Located right next to the Appalachians, Charlott
 
 It is possible that photos of sunsets from a particular balcony are overrepresented in this dataset. In my defense, it was a frickin' awesome view, and I love sunsets.
 
+(Click on a photo to view at full resolution)
+
 <!--
   Every image dropped into `assets/img/beautiful_uva/` is displayed below
   automatically — no need to list filenames here.
