@@ -70,8 +70,6 @@ Put your address / P.O. box / other info right below your picture. You can also 
 
 Link to your social media connections, too. This theme is set up to use [Font Awesome icons](https://fontawesome.com/) and [Academicons](https://jpswalsh.github.io/academicons/), like the ones below. Add your Facebook, Twitter, LinkedIn, Google Scholar, or just disable all of them. -->
 
-
-
 ## Teaching
 
 - <span class="cv-date">Jan 2024 – Dec 2024</span>TA for [CS 3130](https://www.cs.virginia.edu/~cr4bd/3130/F2024/) (Computer Systems and Organization 2) at UVA for two semesters
@@ -79,7 +77,3 @@ Link to your social media connections, too. This theme is set up to use [Font Aw
   - <span class="cv-date">Nov 2024</span>Created and delivered 3-hour lecture series [Intro to Transformers from a Mechanistic Interpretability Perspective](https://youtube.com/playlist?list=PLPUFuwYqzOE2oKVLDdeimXOvC2YiUYB84&si=P3nfrs_eucVUqKEo) alongside [Vainateya Rangaraju](https://vainateyar.com)
   - <span class="cv-date">Sep 2024 - Dec 2024</span>Led weekly [reading group](https://www.mlatuva.org/education)
   - <span class="cv-date">Sep 2023 - Dec 2024</span>Mentored interest projects weekly
-
-
-
-
