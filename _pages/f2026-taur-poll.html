@@ -1,0 +1,833 @@
+---
+layout: bare
+permalink: /f2026-taur-poll/
+title: Activity poll
+nav: false
+sitemap: false
+
+# Google Apps Script web app URL (ends in /exec). Source: _poll/Code.gs
+# While this is empty the page runs in preview mode and nothing is saved.
+poll_endpoint: "https://script.google.com/macros/s/AKfycbzaBwZUun44uzqK2W3hrAoIQK32ICIONlJ2n3k7Ykkj79o99iZ6g71OOtRI-Je4N7eW/exec"
+
+# Each option needs a `name`; `detail` is optional.
+# Renaming an option later creates a new column in the sheet.
+poll_options:
+  - name: Jazz club
+  - name: Live music
+  - name: Comedy club
+  - name: Escape room
+  - name: Minigolf
+  - name: Bar
+  - name: Shuffleboard
+  - name: Axe throwing
+  - name: Bowling
+  - name: Really nice dinner
+    detail: The whole budget goes toward the meal
+---
+
+<div id="poll" class="poll">
+  <p class="poll-preview" hidden>Preview mode: no endpoint is configured, so votes are not saved.</p>
+
+  <p class="poll-note">
+    <strong>I assume that we'll eat regardless of what we do.</strong> "Really nice dinner" just means putting the whole budget toward
+    the meal.
+  </p>
+
+  <section data-step="name">
+    <ol class="poll-howto">
+      <li>Enter your name.</li>
+      <li>Tap every activity you'd be up for. Pick as many as you like.</li>
+      <li>After that, you'll have the <strong>option</strong> to rank the ones you picked. You can skip it.</li>
+    </ol>
+    <form id="poll-name-form" novalidate>
+      <label for="poll-name" class="poll-label">Your name</label>
+      <input id="poll-name" class="poll-input" type="text" autocomplete="name" autocapitalize="words" maxlength="60" enterkeyhint="go" />
+      <p class="poll-hint">
+        Already voted, or got partway through? Enter the same name to pick up where you left off. Submitting again replaces your earlier vote.
+      </p>
+      <div class="poll-actions">
+        <button type="submit" class="poll-btn poll-btn-primary">Start</button>
+      </div>
+    </form>
+  </section>
+
+  <section data-step="pick" hidden>
+    <p class="poll-lead">Hi <strong class="poll-who"></strong>! Tap every activity you'd be up for.</p>
+    <div class="poll-options" role="group" aria-label="Activities"></div>
+    <p class="poll-hint">Next, you can rank your picks if you want to.</p>
+    <div class="poll-actions">
+      <button type="button" class="poll-btn" data-go="name">Back</button>
+      <button type="button" class="poll-btn poll-btn-primary" id="poll-confirm" disabled>Confirm</button>
+    </div>
+  </section>
+
+  <section data-step="ask" hidden>
+    <p class="poll-lead">Do you want to rank the <strong class="poll-count"></strong> activities you picked?</p>
+    <p class="poll-hint">This is optional.</p>
+    <div class="poll-actions">
+      <button type="button" class="poll-btn" data-go="pick">&larr; Back to choices</button>
+      <span class="poll-actions-right">
+        <button type="button" class="poll-btn" id="poll-no-rank">No, submit</button>
+        <button type="button" class="poll-btn poll-btn-primary" id="poll-yes-rank">Yes, rank them</button>
+      </span>
+    </div>
+  </section>
+
+  <section data-step="rank" hidden>
+    <p class="poll-lead">Drag your favorite to the top. You can also use the arrows.</p>
+    <ol class="poll-rank" aria-label="Your ranking"></ol>
+    <p class="poll-hint">Want to add or remove an activity? Go back to your choices. Your order is kept.</p>
+    <div class="poll-actions">
+      <button type="button" class="poll-btn" data-go="pick">&larr; Back to choices</button>
+      <button type="button" class="poll-btn poll-btn-primary" id="poll-rank-submit">Submit</button>
+    </div>
+  </section>
+
+  <section data-step="done" hidden>
+    <p class="poll-lead poll-done-lead"></p>
+    <div class="poll-summary"></div>
+    <div class="poll-actions">
+      <button type="button" class="poll-btn" id="poll-someone-else">Vote as someone else</button>
+      <button type="button" class="poll-btn poll-btn-primary" data-go="pick">Change my vote</button>
+    </div>
+  </section>
+
+  <p class="poll-message" role="status" aria-live="polite" hidden></p>
+</div>
+
+<style>
+  .poll {
+    max-width: 640px;
+    scroll-margin-top: 5rem;
+  }
+  .poll section[hidden],
+  .poll [hidden] {
+    display: none !important;
+  }
+  .poll-note {
+    font-size: 0.95rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 10px;
+    border-left: 4px solid var(--global-theme-color);
+    background: color-mix(in srgb, var(--global-theme-color) 8%, var(--global-bg-color));
+    margin-bottom: 1.25rem;
+  }
+  .poll-howto {
+    padding-left: 1.3rem;
+    margin-bottom: 1.25rem;
+  }
+  .poll-howto li {
+    margin-bottom: 0.3rem;
+  }
+  .poll-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.4rem;
+  }
+  .poll-input {
+    width: 100%;
+    font-size: 16px; /* >=16px stops iOS from zooming on focus */
+    padding: 0.7rem 0.85rem;
+    border: 1px solid var(--global-divider-color);
+    border-radius: 10px;
+    background: var(--global-card-bg-color);
+    color: var(--global-text-color);
+  }
+  .poll-input:focus {
+    outline: none;
+    border-color: var(--global-theme-color);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--global-theme-color) 25%, transparent);
+  }
+  .poll-lead {
+    font-size: 1.05rem;
+    margin-bottom: 1rem;
+  }
+  .poll-hint {
+    color: var(--global-text-color-light);
+    font-size: 0.9rem;
+    margin: 0.75rem 0 0;
+  }
+  .poll-preview {
+    font-size: 0.9rem;
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    background: var(--global-warning-block-bg);
+    color: var(--global-warning-block-text);
+    border-left: 4px solid var(--global-warning-block);
+  }
+
+  /* Buttons */
+  .poll-btn {
+    font: inherit;
+    font-size: 1rem;
+    min-height: 44px;
+    padding: 0.55rem 1.1rem;
+    border-radius: 10px;
+    border: 1px solid var(--global-divider-color);
+    background: var(--global-card-bg-color);
+    color: var(--global-text-color);
+    cursor: pointer;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s,
+      opacity 0.15s;
+  }
+  .poll-btn:hover:not(:disabled) {
+    border-color: var(--global-theme-color);
+  }
+  .poll-btn:focus-visible,
+  .poll-option:focus-visible,
+  .poll-move button:focus-visible {
+    outline: 2px solid var(--global-theme-color);
+    outline-offset: 2px;
+  }
+  .poll-btn-primary {
+    background: var(--global-theme-color);
+    border-color: var(--global-theme-color);
+    color: var(--global-hover-text-color);
+    font-weight: 600;
+  }
+  .poll-btn-primary:hover:not(:disabled) {
+    filter: brightness(1.08);
+  }
+  .poll-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+  .poll-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-top: 1.25rem;
+  }
+  .poll-actions > .poll-btn-primary:only-child {
+    margin-left: auto;
+  }
+  .poll-actions-right {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  /* Option cards */
+  .poll-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.6rem;
+  }
+  .poll-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-height: 56px;
+    padding: 0.75rem 0.9rem;
+    text-align: left;
+    font: inherit;
+    color: var(--global-text-color);
+    background: var(--global-card-bg-color);
+    border: 1px solid var(--global-divider-color);
+    border-radius: 12px;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    transition:
+      border-color 0.15s,
+      background-color 0.15s,
+      box-shadow 0.15s;
+  }
+  @media (hover: hover) {
+    .poll-option:hover {
+      border-color: var(--global-theme-color);
+    }
+  }
+  .poll-option[aria-pressed="true"] {
+    border-color: var(--global-theme-color);
+    box-shadow: inset 0 0 0 1px var(--global-theme-color);
+    background: color-mix(in srgb, var(--global-theme-color) 10%, var(--global-card-bg-color));
+  }
+  .poll-check {
+    flex: none;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid var(--global-divider-color);
+    display: grid;
+    place-items: center;
+    transition:
+      background-color 0.15s,
+      border-color 0.15s;
+  }
+  .poll-option[aria-pressed="true"] .poll-check {
+    background: var(--global-theme-color);
+    border-color: var(--global-theme-color);
+  }
+  .poll-option[aria-pressed="true"] .poll-check::after {
+    content: "";
+    width: 6px;
+    height: 11px;
+    margin-top: -2px;
+    border: solid var(--global-hover-text-color);
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .poll-option-text {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+  .poll-option-name {
+    font-weight: 600;
+  }
+  .poll-option-detail {
+    font-size: 0.85rem;
+    color: var(--global-text-color-light);
+  }
+
+  /* Ranking list */
+  .poll-rank {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    counter-reset: rank;
+  }
+  .poll-rank li {
+    counter-increment: rank;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.35rem 0.4rem 0.35rem 0.25rem;
+    background: var(--global-card-bg-color);
+    border: 1px solid var(--global-divider-color);
+    border-radius: 12px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .poll-handle {
+    flex: none;
+    width: 40px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    color: var(--global-text-color-light);
+    cursor: grab;
+    touch-action: none; /* dragging the handle shouldn't scroll the page */
+  }
+  .poll-handle svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+  }
+  .poll-no-drag .poll-handle {
+    display: none;
+  }
+  .poll-rank-num::before {
+    content: counter(rank);
+  }
+  .poll-rank-num {
+    flex: none;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    font-size: 0.9rem;
+    font-weight: 700;
+    background: color-mix(in srgb, var(--global-theme-color) 15%, transparent);
+    color: var(--global-theme-color);
+  }
+  .poll-rank-name {
+    flex: 1;
+    min-width: 0;
+    font-weight: 600;
+  }
+  .poll-move {
+    flex: none;
+    display: flex;
+    gap: 0.25rem;
+  }
+  .poll-move button {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    border: 1px solid var(--global-divider-color);
+    background: transparent;
+    color: var(--global-text-color);
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+  .poll-move button:hover {
+    border-color: var(--global-theme-color);
+  }
+  /* Set from JS (updateArrows) rather than :first-child/:last-child, which some
+     browsers don't repaint reliably after the list is reordered. */
+  .poll-move button.is-edge {
+    visibility: hidden;
+  }
+  .poll-ghost {
+    opacity: 0.35;
+  }
+  .poll-chosen {
+    border-color: var(--global-theme-color);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+  }
+
+  .poll-summary ol,
+  .poll-summary ul {
+    padding-left: 1.4rem;
+  }
+  .poll-summary .poll-hint {
+    margin: 0 0 0.4rem;
+  }
+  .poll-message {
+    margin-top: 1rem;
+    font-size: 0.95rem;
+  }
+  .poll-message.is-error {
+    padding: 0.6rem 0.85rem;
+    border-radius: 8px;
+    background: var(--global-danger-block-bg);
+    color: var(--global-danger-block-text);
+    border-left: 4px solid var(--global-danger-block);
+  }
+
+  @media (max-width: 576px) {
+    .poll-actions,
+    .poll-actions-right {
+      flex-direction: column-reverse;
+    }
+    .poll-actions .poll-btn,
+    .poll-actions-right {
+      width: 100%;
+    }
+    .poll-options {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script
+  src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"
+  integrity="sha256-ymhDBwPE9ZYOkHNYZ8bpTSm1o943EH2BAOWjAQB+nm4="
+  crossorigin="anonymous"
+></script>
+<script>
+  (function () {
+    var OPTIONS = ({{ page.poll_options | jsonify }} || []).map(function (o) {
+      return typeof o === "string" ? { name: o, detail: "" } : { name: String(o.name), detail: o.detail || "" };
+    });
+    var ENDPOINT = {{ page.poll_endpoint | default: "" | jsonify }};
+    var STORE_KEY = "poll:" + {{ page.url | jsonify }};
+    var OPTION_NAMES = OPTIONS.map(function (o) {
+      return o.name;
+    });
+
+    var root = document.getElementById("poll");
+    var $ = function (sel) {
+      return root.querySelector(sel);
+    };
+    var steps = root.querySelectorAll("[data-step]");
+    var nameInput = $("#poll-name");
+    var optWrap = $(".poll-options");
+    var confirmBtn = $("#poll-confirm");
+    var rankList = $(".poll-rank");
+    var message = $(".poll-message");
+
+    var state = { name: "", votes: [], ranking: [] };
+    var currentStep = "name";
+    var busy = false;
+
+    // ---------- helpers ----------
+    function tidyName(s) {
+      return String(s || "")
+        .trim()
+        .replace(/\s+/g, " ");
+    }
+    function nameKey(s) {
+      return tidyName(s).toLowerCase();
+    }
+    function known(list) {
+      return (list || []).filter(function (v) {
+        return OPTION_NAMES.indexOf(v) !== -1;
+      });
+    }
+    function show(step) {
+      currentStep = step;
+      steps.forEach(function (s) {
+        s.hidden = s.dataset.step !== step;
+      });
+      setMessage("");
+      if (root.getBoundingClientRect().top < 0) root.scrollIntoView({ behavior: "smooth", block: "start" });
+      persist();
+    }
+    function setMessage(text, isError) {
+      message.textContent = text;
+      message.hidden = !text;
+      message.classList.toggle("is-error", !!isError);
+    }
+    function setBusy(on) {
+      busy = on;
+      root.setAttribute("aria-busy", on ? "true" : "false");
+      root.querySelectorAll("button, input").forEach(function (el) {
+        el.disabled = on;
+      });
+      if (!on) syncOptions();
+    }
+
+    // ---------- this browser's progress, so a reload/new session resumes ----------
+    // Shape: { last: "Name", people: { "name": { name, step, votes, ranking, t } } }
+    function loadStore() {
+      try {
+        var d = JSON.parse(localStorage.getItem(STORE_KEY));
+        if (d && d.people) return d;
+      } catch (e) {}
+      return { last: "", people: {} };
+    }
+    var store = loadStore();
+    function persist() {
+      if (!state.name || currentStep === "name") return;
+      if (currentStep === "rank") state.ranking = currentRanking();
+      store.last = state.name;
+      store.people[nameKey(state.name)] = {
+        name: state.name,
+        step: currentStep,
+        votes: state.votes.slice(),
+        ranking: state.ranking.slice(),
+        t: Date.now(),
+      };
+      try {
+        localStorage.setItem(STORE_KEY, JSON.stringify(store));
+      } catch (e) {}
+    }
+
+    // ---------- server lookup of an existing vote ----------
+    function lookup(name) {
+      if (!ENDPOINT) return Promise.resolve(null);
+      var url = ENDPOINT + (ENDPOINT.indexOf("?") === -1 ? "?" : "&") + "action=lookup&name=" + encodeURIComponent(name);
+      var timeout = new Promise(function (resolve) {
+        setTimeout(resolve, 10000, null);
+      });
+      var req = fetch(url)
+        .then(function (r) {
+          return r.json();
+        })
+        .then(function (d) {
+          // Older script versions don't support lookup and omit `found`.
+          return d && d.ok && "found" in d ? d : null;
+        })
+        .catch(function () {
+          return null;
+        });
+      return Promise.race([req, timeout]);
+    }
+
+    // ---------- step 1: name ----------
+    nameInput.value = store.last || "";
+
+    $("#poll-name-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (busy) return;
+      var name = tidyName(nameInput.value);
+      if (!name) {
+        setMessage("Please enter your name.", true);
+        nameInput.focus();
+        return;
+      }
+      nameInput.value = name;
+      if (nameKey(name) === nameKey(state.name)) {
+        // Same person in this visit (e.g. pressed Back): keep what they have.
+        state.name = name;
+        setWho();
+        show("pick");
+        return;
+      }
+      setBusy(true);
+      setMessage("Looking you up...");
+      lookup(name).then(function (server) {
+        setBusy(false);
+        resume(name, server);
+      });
+    });
+
+    function setWho() {
+      root.querySelectorAll(".poll-who").forEach(function (el) {
+        el.textContent = state.name;
+      });
+    }
+
+    function resume(name, server) {
+      var local = store.people[nameKey(name)] || null;
+      var onServer = server && server.found;
+      var serverTime = onServer ? Date.parse(server.updated) || 0 : 0;
+      // If the server says there's no vote, a local "done" is stale (row was deleted).
+      if (local && local.step === "done" && server && !server.found) local = null;
+
+      state = { name: name, votes: [], ranking: [] };
+      setWho();
+
+      if (local && (!onServer || local.t > serverTime)) {
+        state.votes = known(local.votes);
+        state.ranking = known(local.ranking);
+        var step = local.step;
+        if (step === "done") {
+          renderDone(true, false);
+        } else if (step === "ask" && state.votes.length > 1) {
+          $(".poll-count").textContent = state.votes.length;
+        } else if (step === "rank" && state.votes.length > 1) {
+          buildRanking();
+        } else {
+          step = "pick";
+        }
+        syncOptions();
+        show(step);
+        if (step !== "done") setMessage("Welcome back! You're right where you left off.");
+      } else if (onServer) {
+        state.votes = known(server.votes);
+        state.ranking = known(server.ranking);
+        renderDone(true, false);
+        syncOptions();
+        show("done");
+      } else {
+        syncOptions();
+        show("pick");
+      }
+    }
+
+    // ---------- step 2: pick ----------
+    OPTIONS.forEach(function (o) {
+      var b = document.createElement("button");
+      b.type = "button";
+      b.className = "poll-option";
+      b.dataset.name = o.name;
+      b.setAttribute("aria-pressed", "false");
+      b.innerHTML =
+        '<span class="poll-check" aria-hidden="true"></span>' +
+        '<span class="poll-option-text"><span class="poll-option-name"></span><span class="poll-option-detail"></span></span>';
+      b.querySelector(".poll-option-name").textContent = o.name;
+      var detail = b.querySelector(".poll-option-detail");
+      if (o.detail) detail.textContent = o.detail;
+      else detail.remove();
+      b.addEventListener("click", function () {
+        var i = state.votes.indexOf(o.name);
+        if (i === -1) state.votes.push(o.name);
+        else state.votes.splice(i, 1);
+        syncOptions();
+        persist();
+      });
+      optWrap.appendChild(b);
+    });
+    if (!OPTIONS.length) optWrap.textContent = "No options have been set up yet.";
+
+    function syncOptions() {
+      optWrap.querySelectorAll(".poll-option").forEach(function (b) {
+        b.setAttribute("aria-pressed", state.votes.indexOf(b.dataset.name) !== -1 ? "true" : "false");
+      });
+      var n = state.votes.length;
+      confirmBtn.disabled = busy || n === 0;
+      confirmBtn.textContent = n === 0 ? "Confirm" : "Confirm (" + n + ")";
+    }
+
+    confirmBtn.addEventListener("click", function () {
+      state.votes.sort(function (a, b) {
+        return OPTION_NAMES.indexOf(a) - OPTION_NAMES.indexOf(b);
+      });
+      if (state.votes.length === 1) {
+        // Nothing to rank with a single pick.
+        state.ranking = [];
+        submit();
+        return;
+      }
+      $(".poll-count").textContent = state.votes.length;
+      show("ask");
+    });
+
+    // ---------- step 3: ask about ranking ----------
+    $("#poll-no-rank").addEventListener("click", function () {
+      state.ranking = [];
+      submit();
+    });
+    $("#poll-yes-rank").addEventListener("click", function () {
+      buildRanking();
+      show("rank");
+    });
+
+    // ---------- step 4: rank ----------
+    var GRIP =
+      '<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="7" cy="4" r="1.6"/><circle cx="13" cy="4" r="1.6"/><circle cx="7" cy="10" r="1.6"/><circle cx="13" cy="10" r="1.6"/><circle cx="7" cy="16" r="1.6"/><circle cx="13" cy="16" r="1.6"/></svg>';
+
+    function buildRanking() {
+      // Keep any earlier order for options still picked; new picks go to the bottom.
+      var order = state.ranking
+        .filter(function (v) {
+          return state.votes.indexOf(v) !== -1;
+        })
+        .concat(
+          state.votes.filter(function (v) {
+            return state.ranking.indexOf(v) === -1;
+          })
+        );
+      rankList.innerHTML = "";
+      order.forEach(function (name) {
+        var li = document.createElement("li");
+        li.dataset.name = name;
+        li.innerHTML =
+          '<span class="poll-handle" title="Drag to reorder">' +
+          GRIP +
+          "</span>" +
+          '<span class="poll-rank-num" aria-hidden="true"></span>' +
+          '<span class="poll-rank-name"></span>' +
+          '<span class="poll-move">' +
+          '<button type="button" data-move="up" aria-label="Move up">&#9650;</button>' +
+          '<button type="button" data-move="down" aria-label="Move down">&#9660;</button>' +
+          "</span>";
+        li.querySelector(".poll-rank-name").textContent = name;
+        rankList.appendChild(li);
+      });
+      updateArrows();
+    }
+    function rankItems() {
+      return Array.prototype.filter.call(rankList.children, function (li) {
+        return li.dataset.name && !li.classList.contains("sortable-fallback");
+      });
+    }
+    function currentRanking() {
+      return rankItems().map(function (li) {
+        return li.dataset.name;
+      });
+    }
+    // Hide "up" on the first item and "down" on the last; rerun after every reorder.
+    function updateArrows() {
+      var items = rankItems();
+      items.forEach(function (li, i) {
+        setEdge(li.querySelector('[data-move="up"]'), i === 0);
+        setEdge(li.querySelector('[data-move="down"]'), i === items.length - 1);
+      });
+    }
+    function setEdge(btn, isEdge) {
+      btn.classList.toggle("is-edge", isEdge);
+      btn.tabIndex = isEdge ? -1 : 0;
+      btn.setAttribute("aria-hidden", isEdge ? "true" : "false");
+    }
+
+    rankList.addEventListener("click", function (e) {
+      var btn = e.target.closest("button[data-move]");
+      if (!btn) return;
+      var li = btn.closest("li");
+      if (btn.dataset.move === "up" && li.previousElementSibling) {
+        rankList.insertBefore(li, li.previousElementSibling);
+      } else if (btn.dataset.move === "down" && li.nextElementSibling) {
+        rankList.insertBefore(li.nextElementSibling, li);
+      }
+      updateArrows();
+      if (btn.classList.contains("is-edge")) {
+        var other = li.querySelector('[data-move="' + (btn.dataset.move === "up" ? "down" : "up") + '"]');
+        if (other) other.focus();
+      } else {
+        btn.focus();
+      }
+      persist();
+    });
+
+    if (window.Sortable) {
+      Sortable.create(rankList, {
+        handle: ".poll-handle",
+        animation: 150,
+        ghostClass: "poll-ghost",
+        chosenClass: "poll-chosen",
+        fallbackOnBody: true, // keep the touch-drag clone out of the list
+        onChange: updateArrows, // live while dragging
+        onEnd: function () {
+          updateArrows();
+          persist();
+        },
+      });
+    } else {
+      rankList.classList.add("poll-no-drag"); // arrows still work
+    }
+
+    $("#poll-rank-submit").addEventListener("click", function () {
+      state.ranking = currentRanking();
+      submit();
+    });
+
+    // ---------- navigation ----------
+    root.querySelectorAll("[data-go]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var to = b.dataset.go;
+        if (currentStep === "rank") state.ranking = currentRanking();
+        if (to === "pick") syncOptions();
+        show(to);
+        if (to === "name") nameInput.focus();
+      });
+    });
+    $("#poll-someone-else").addEventListener("click", function () {
+      state = { name: "", votes: [], ranking: [] };
+      nameInput.value = "";
+      show("name");
+      nameInput.focus();
+    });
+
+    // ---------- submit ----------
+    function submit() {
+      if (busy) return;
+      var payload = { name: state.name, votes: state.votes.slice(), ranking: state.ranking.slice() };
+      setBusy(true);
+      setMessage("Saving your vote...");
+
+      var request = ENDPOINT
+        ? fetch(ENDPOINT, {
+            method: "POST",
+            // text/plain avoids a CORS preflight, which Apps Script can't answer.
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            body: JSON.stringify(payload),
+          })
+            .catch(function () {
+              throw new Error("Couldn't reach the server. Check your connection and try again.");
+            })
+            .then(function (res) {
+              return res.json().catch(function () {
+                throw new Error("The server sent an unexpected response. Please try again.");
+              });
+            })
+        : new Promise(function (resolve) {
+            console.info("[poll] preview mode, not saved:", payload);
+            setTimeout(resolve, 400, { ok: true, replaced: false });
+          });
+
+      request
+        .then(function (result) {
+          if (!result || !result.ok) throw new Error((result && result.error) || "Something went wrong. Please try again.");
+          renderDone(false, result.replaced);
+          setBusy(false);
+          show("done");
+        })
+        .catch(function (err) {
+          setBusy(false);
+          setMessage(err.message, true);
+        });
+    }
+
+    function renderDone(restored, replaced) {
+      $(".poll-done-lead").textContent = restored
+        ? "Welcome back, " + state.name + "! Your vote is already in."
+        : "Thanks, " + state.name + "! " + (replaced ? "Your earlier vote was replaced." : "Your vote is saved.");
+      var ranked = state.ranking.length > 0;
+      var list = document.createElement(ranked ? "ol" : "ul");
+      (ranked ? state.ranking : state.votes).forEach(function (v) {
+        var li = document.createElement("li");
+        li.textContent = v;
+        list.appendChild(li);
+      });
+      var heading = document.createElement("p");
+      heading.className = "poll-hint";
+      heading.textContent = ranked ? "Your ranking:" : "You voted for:";
+      var box = $(".poll-summary");
+      box.innerHTML = "";
+      box.appendChild(heading);
+      box.appendChild(list);
+    }
+
+    if (!ENDPOINT) $(".poll-preview").hidden = false;
+  })();
+</script>

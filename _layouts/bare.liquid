@@ -1,0 +1,101 @@
+<!doctype html>
+{% comment %}
+  Standalone layout: none of the site's header, footer, metadata, favicon,
+  styles or scripts, so the page carries no site branding. Always noindex.
+{% endcomment %}
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="referrer" content="no-referrer">
+    <title>{{ page.title | escape }}</title>
+    {% if page.description %}
+      <meta name="description" content="{{ page.description | escape }}">
+    {% endif %}
+    <link rel="icon" href="data:,">
+    <style>
+      :root {
+        color-scheme: light dark;
+        --global-bg-color: #ffffff;
+        --global-text-color: #1a1a1a;
+        --global-text-color-light: #6b6b6b;
+        --global-theme-color: #4f46e5;
+        --global-hover-text-color: #ffffff;
+        --global-divider-color: rgba(0, 0, 0, 0.12);
+        --global-card-bg-color: #ffffff;
+        --global-warning-block: #e7c000;
+        --global-warning-block-bg: #fff8d8;
+        --global-warning-block-text: #6b5900;
+        --global-danger-block: #cc0000;
+        --global-danger-block-bg: #ffe0e0;
+        --global-danger-block-text: #660000;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --global-bg-color: #18181b;
+          --global-text-color: #e7e7ea;
+          --global-text-color-light: #a1a1aa;
+          --global-theme-color: #818cf8;
+          --global-hover-text-color: #111111;
+          --global-divider-color: rgba(255, 255, 255, 0.14);
+          --global-card-bg-color: #222226;
+          --global-warning-block: #e7c000;
+          --global-warning-block-bg: #3a3310;
+          --global-warning-block-text: #f5e7a1;
+          --global-danger-block: #ff6b6b;
+          --global-danger-block-bg: #3d1a1a;
+          --global-danger-block-text: #ffc9c9;
+        }
+      }
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      html {
+        -webkit-text-size-adjust: 100%;
+      }
+      body {
+        margin: 0;
+        background: var(--global-bg-color);
+        color: var(--global-text-color);
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          Roboto,
+          'Helvetica Neue',
+          Arial,
+          sans-serif;
+        line-height: 1.5;
+      }
+      .bare {
+        max-width: 672px;
+        margin: 0 auto;
+        padding: 2.5rem 16px 4rem;
+      }
+      .bare-title {
+        font-size: 2rem;
+        line-height: 1.2;
+        margin: 0 0 0.35rem;
+      }
+      .bare-description {
+        color: var(--global-text-color-light);
+        margin: 0 0 1.5rem;
+      }
+      p {
+        margin: 0 0 1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="bare">
+      <h1 class="bare-title">{{ page.title | escape }}</h1>
+      {% if page.description %}
+        <p class="bare-description">{{ page.description | escape }}</p>
+      {% endif %}
+      {{ content }}
+    </main>
+  </body>
+</html>
